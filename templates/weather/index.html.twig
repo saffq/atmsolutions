@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aplikacja pogodowa</title>
+</head>
+<body>
+<h1>Aplikacja pogodowa</h1>
+<form method="get">
+    <label for="city">Wyszukaj miasto:</label>
+    <input type="text" id="city" name="city" value="{{ city }}">
+    <button type="submit">Szukaj</button>
+</form>
+{% if city %}
+    {% if weatherData is defined %}
+        {% if weatherData.error is defined %}
+            <p id="error-message" style="color: red;">{{ weatherData.error.message }}</p>
+        {% else %}
+
+            {% if weatherData.main is defined %}
+                <h2>Pogoda dla {{ city }}:</h2>
+                <p>Temperatura: {{ weatherData.main.temp }}°C</p>
+                <p>Opis: {{ weatherData.weather[0].description }}</p>
+            {% else %}
+                <p>Brak danych o pogodzie dla {{ city }}</p>
+            {% endif %}
+        {% endif %}
+    {% else %}
+        <p id="error-message" style="color: red;">Brak danych o pogodzie dla {{ city }}</p>
+    {% endif %}
+{% endif %}
+
+</body>
+</html>
