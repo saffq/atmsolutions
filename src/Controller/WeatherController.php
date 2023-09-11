@@ -34,6 +34,7 @@ class WeatherController extends AbstractController
                     'q' => $city,
                     'appid' => $apiKey,
                     'units' => 'metric',
+                    'lang' => 'pl',
                 ],
             ]);
 

@@ -1,33 +1,61 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Aplikacja pogodowa</title>
-</head>
-<body>
-<h1>Aplikacja pogodowa</h1>
-<form method="get">
-    <label for="city">Wyszukaj miasto:</label>
-    <input type="text" id="city" name="city" value="{{ city }}">
-    <button type="submit">Szukaj</button>
-</form>
-{% if city %}
-    {% if weatherData is defined %}
-        {% if weatherData.error is defined %}
-            <p id="error-message" style="color: red;">{{ weatherData.error.message }}</p>
-        {% else %}
+{% extends 'base.html.twig' %}
 
-            {% if weatherData.main is defined %}
-                <h2>Pogoda dla {{ city }}:</h2>
-                <p>Temperatura: {{ weatherData.main.temp }}°C</p>
-                <p>Opis: {{ weatherData.weather[0].description }}</p>
-            {% else %}
-                <p>Brak danych o pogodzie dla {{ city }}</p>
+{% block body %}
+    <div class="container text-center">
+        <h1 class="mt-4" >Aplikacja pogodowa</h1>
+        <form class="form-group mt-4" method="get">
+            <input type="text" class="form-control form-control-sm mx-auto" id="city" name="city" value="{{ city }}" placeholder="Wpisz nazwę miejscowości" style="max-width: 600px;">
+            <button type="submit" class="btn btn-primary mt-2">Szukaj</button>
+        </form>
+        <div class="d-flex justify-content-center align-items-center flex-column mt-4">
+            {% if city %}
+                {% if weatherData is defined and weatherData.main is defined %}
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <h2 class="card-title">{{ city }}</h2>
+                            <div class="container text-center mt-4">
+                                {% if weatherData is defined and weatherData.dt is defined and weatherData.timezone is defined %}
+                                    {% set timestamp = weatherData.dt + weatherData.timezone %}
+                                    <p>Data i czas w mieście {{ city }}: {{ timestamp|date('Y-m-d H:i:s') }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    {% if weatherData.weather[0].icon is defined %}
+                                        <img src="https://openweathermap.org/img/wn/{{ weatherData.weather[0].icon }}.png" class="card-img-top icon" alt="Ikona pogodowa">
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="card-text info-pogodowe">{{ weatherData.weather[0].description }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-md-auto">
+                                    <p class="card-text info-pogodowe">Temperatura: {{ weatherData.main.temp }}°C</p>
+                                    <p class="card-text info-pogodowe">Temperatura minimalna: {{ weatherData.main.temp_min }}°C</p>
+                                </div>
+                                <div class="col-md-auto">
+                                    <p class="card-text info-pogodowe">Odczuwalna temperatura: {{ weatherData.main.feels_like }}°C</p>
+                                    <p class="card-text info-pogodowe">Temperatura maksymalna: {{ weatherData.main.temp_max }}°C</p>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <p class="card-text info-pogodowe">Ciśnienie: {{ weatherData.main.pressure }} hPa</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="card-text info-pogodowe">Wilgotność: {{ weatherData.main.humidity }} %</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if error is not null %}
+                    <p class="mt-4" style="color: red;">{{ error }}</p>
+                {% endif %}
             {% endif %}
-        {% endif %}
-    {% else %}
-        <p id="error-message" style="color: red;">Brak danych o pogodzie dla {{ city }}</p>
-    {% endif %}
-{% endif %}
-
-</body>
-</html>
+        </div>
+    </div>
+{% endblock %}
